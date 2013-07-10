@@ -2,7 +2,7 @@ PO = {
 	["VERSION"] = "0.1",
 	["AUTHOR"] = "steino",
 	["LICENSE"] = "GPL-3",
-	["DESC"] = "Lua Plugin for Pushover",
+	["DESC"] = "Weechat Plugin for Pushover written in Lua.",
 	["NAME"] = "pushover_lua"
 }
 
