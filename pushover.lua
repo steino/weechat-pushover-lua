@@ -7,8 +7,8 @@ PO = {
 }
 
 local function pushover_send(postfields)
-	local token = ''
-	local user = ''
+	local token = 'RTPqqbBizN3tKCUxfmym7bwxkAdhP2'
+	local user = weechat.config_get_plugin'userkey'
 	postfields = postfields .. "&token=%s&user=%s"
 	weechat.hook_process_hashtable("url:https://api.pushover.net/1/messages.json", { post = 1, postfields = postfields:format(token, user)}, 30*1000, "", "")
 end

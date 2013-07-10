@@ -1,0 +1,3 @@
+Set your userkey with the follwing command:
+
+/set plugins.var.lua.pushover_lua.userkey <key>
