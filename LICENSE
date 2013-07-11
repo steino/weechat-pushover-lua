@@ -1,4 +1,4 @@
- pushover_lua - A Weechat pluging for Pushover written in Lua.
+ pushover_lua - A Weechat plugin for Pushover written in Lua.
  Copyright (C) 2013 Stein Ivar Berghei
 
  This program is free software: you can redistribute it and/or modify
