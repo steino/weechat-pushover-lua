@@ -6,6 +6,7 @@ PO = {
 	["NAME"] = "pushover_lua"
 }
 
+local pm = {}
 local function pushover_send(postfields)
 	local token = 'RTPqqbBizN3tKCUxfmym7bwxkAdhP2'
 	local user = weechat.config_get_plugin'userkey'
@@ -14,9 +15,15 @@ local function pushover_send(postfields)
 end
 
 function pushover_pm(data, signal, signal_data)
+	local throttle = tonumber(weechat.config_get_plugin'throttle') or 1
+	local interval = tonumber(weechat.config_get_plugin'throttle_interval') or 1
+
 	local nick, msg = signal_data:match":(.-)%!.-:(.*)"
 	if not nick then return end
+
 	local postfields = 'title=%s&message=%s'
+	if throttle == 1 and pm[nick] and (os.time() < pm[nick]+(interval*60)) then pm[nick] = os.time() return end
+	pm[nick] = os.time()
 	pushover_send(postfields:format(nick, msg))
 end
 
