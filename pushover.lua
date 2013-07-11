@@ -14,7 +14,7 @@ local function pushover_send(postfields)
 end
 
 function pushover_pm(data, signal, signal_data)
-	local nick, msg = signal_data:match":(.*)\!.-:(.*)"
+	local nick, msg = signal_data:match":(.-)%!.-:(.*)"
 	if not nick then return end
 	local postfields = 'title=%s&message=%s'
 	pushover_send(postfields:format(nick, msg))
