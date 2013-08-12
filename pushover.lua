@@ -32,7 +32,8 @@ function pushover_highlight(...)
 	if tonumber(highlight) == 1 then
 		local network, channel = weechat.buffer_get_string(buffer, "name"):match"(.+)%.(#.*)"
 		if not channel then return end
-		local prefix = weechat.string_remove_color(prefix, "")
+		prefix = weechat.string_remove_color(prefix, "")
+		msg = weechat.string_remove_color(msg, "")
 		local postfields = 'title=%s (%s)&message=<%s> %s'
 		pushover_send(postfields:format(channel, network, prefix, msg))
 	end
