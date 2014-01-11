@@ -3,15 +3,34 @@ PO = {
 	["AUTHOR"] = "steino",
 	["LICENSE"] = "GPL-3",
 	["DESC"] = "Weechat Plugin for Pushover written in Lua.",
-	["NAME"] = "pushover_lua"
+	["NAME"] = "pushover"
 }
 
+local urlEncode = function(str)
+	return str:gsub(
+		'([^%w ])',
+		function (c)
+			return string.format ("%%%02X", string.byte(c))
+		end
+	):gsub(' ', '+'):gsub('&', '%%26')
+end
+
+local createPostData = function(tbl)
+	local out = {}
+	for k, v in pairs(tbl) do
+		table.insert(out, string.format("%s=%s", k, urlEncode(v)))
+	end
+
+	return table.concat(out, "&")
+end
+
 local pm = {}
-local function pushover_send(postfields)
-	local token = 'RTPqqbBizN3tKCUxfmym7bwxkAdhP2'
-	local user = weechat.config_get_plugin'userkey'
-	postfields = postfields .. "&token=%s&user=%s"
-	weechat.hook_process_hashtable("url:https://api.pushover.net/1/messages.json", { post = 1, postfields = postfields:format(token, user)}, 30*1000, "", "")
+local function pushover_send(fields)
+	fields.token = 'RTPqqbBizN3tKCUxfmym7bwxkAdhP2'
+	fields.user = weechat.config_get_plugin'userkey'
+
+	local postfields = createPostData(fields)
+	weechat.hook_process_hashtable("url:https://api.pushover.net/1/messages.json", { post = 1, postfields = postfields}, 30*1000, "", "")
 end
 
 function pushover_pm(data, signal, signal_data)
@@ -21,10 +40,14 @@ function pushover_pm(data, signal, signal_data)
 	local nick, msg = signal_data:match":(.-)%!.-:(.*)"
 	if not nick then return end
 
-	local postfields = 'title=%s&message=%s'
 	if throttle == 1 and pm[nick] and (os.time() < pm[nick]+(interval*60)) then pm[nick] = os.time() return end
 	pm[nick] = os.time()
-	pushover_send(postfields:format(nick, msg))
+
+	local fields = {
+		title = nick,
+		message = weechat.string_remove_color(msg, ""),
+	}
+	pushover_send(fields)
 end
 
 function pushover_highlight(...)
@@ -32,10 +55,13 @@ function pushover_highlight(...)
 	if tonumber(highlight) == 1 then
 		local network, channel = weechat.buffer_get_string(buffer, "name"):match"(.+)%.(#.*)"
 		if not channel then return end
-		prefix = weechat.string_remove_color(prefix, "")
-		msg = weechat.string_remove_color(msg, "")
-		local postfields = 'title=%s (%s)&message=<%s> %s'
-		pushover_send(postfields:format(channel, network, prefix, msg))
+
+		local prefix = weechat.string_remove_color(prefix, "")
+		local fields = {
+			title = string.format("%s (%s)", channel, network),
+			message = string.format("<%s> %s", prefix, weechat.string_remove_color(msg, ""))
+		}
+		pushover_send(fields)
 	end
 end
 
