@@ -1,8 +1,8 @@
 Set your userkey with the follwing command:
-/set plugins.var.lua.pushover_lua.userkey <key>
+/set plugins.var.lua.pushover.userkey <key>
 
 Enable / Disable private message throttling:
-/set plugins.var.lua.pushover_lua.throttle 1 / 0
+/set plugins.var.lua.pushover.throttle 1 / 0
 
 Change the interval of the throttling:
-/set plugins.var.lua.pushover_lua.throttle_interval <minutes>
+/set plugins.var.lua.pushover.throttle_interval <minutes>
